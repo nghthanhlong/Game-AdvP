@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1740187681 source:d:\academic\uet\advanced programming\game advp\main.cpp
+	<iostream>
+	<vector>
+	<fstream>
+	<cstdlib>
+
