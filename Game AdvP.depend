@@ -1,8 +1,33 @@
 # depslib dependency file v1.0
-1740833700 source:d:\academic\uet\advanced programming\game advp\main.cpp
+1741944449 source:d:\academic\uet\advanced programming\game advp\main.cpp
 	<iostream>
 	<vector>
 	<fstream>
 	<cstdlib>
 	<ctime>
+	<SDL.h>
+	<SDL_ttf.h>
+	<SDL_image.h>
+	"game.h."
+	"graphics.h"
+	"defs.h"
+
+1741942982 d:\academic\uet\advanced programming\game advp\graphics.h
+	<SDL.h>
+	<SDL_ttf.h>
+	<string>
+	"defs.h"
+	"game.h"
+
+1741944563 d:\academic\uet\advanced programming\game advp\defs.h
+
+1741940631 d:\academic\uet\advanced programming\game advp\game.h
+
+1741944511 source:d:\academic\uet\advanced programming\game advp\graphics.cpp
+	<iostream>
+	<SDL.h>
+	<SDL_ttf.h>
+	<SDL_image.h>
+	"graphics.h"
+	"defs.h"
 

@@ -1,6 +1,12 @@
 #ifndef GRAPHICS_H_INCLUDED
 #define GRAPHICS_H_INCLUDED
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <string>
+#include "defs.h"
+#include "game.h"
+
 struct Graphics
 {
     SDL_Window* window;
@@ -11,9 +17,10 @@ struct Graphics
     SDL_Window* initSDL(int WINDOW_WIDTH, int WINDOW_HEIGHT, const char* WINDOW_TITLE);
     SDL_Renderer* createRenderer(SDL_Window* window);
     void quitSDL();
+    void cleanup();
 
     void drawGrid();
-    void drawLetter(Cell grid[GRID_ROWS][GRID_COLS]);
+    //void drawLetter(Cell grid[GRID_ROWS][GRID_COLS]);
     void drawResult(const std::string& message);
 
     void loadAndRenderBackground(const char *imageFileName);
