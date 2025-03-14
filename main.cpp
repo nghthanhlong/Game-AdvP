@@ -3,13 +3,16 @@
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+
 #include<SDL.h>
 #include<SDL_ttf.h>
 #include<SDL_image.h>
-#include"game.h."
+
+#include"game.h"
 #include"graphics.h"
 #include"defs.h"
-const char *WINDOW_TITLE = "Hello World";
+const char *WINDOW_TITLE = "Wordle";
+
 using namespace std;
 
 void waitUntilKeyPressed() {
@@ -34,7 +37,22 @@ int main(int argc, char* argv[])
     }
     graphics.drawGrid();
     SDL_RenderPresent(renderer);
+
+    if (TTF_Init() == -1) {
+        graphics.logErrorAndExit("TTF_Init", TTF_GetError());
+        return -1;
+    }
+    TTF_Font* font = graphics.loadFont("arial.ttf", 24);
+    SDL_Color color = {255, 255, 255, 255};
+    SDL_Texture* helloText = graphics.renderText("WELCOME TO WORDLE", font, color);
+    graphics.renderTexture(helloText, 300, 500);
+
+    graphics.presentScene();
+
     waitUntilKeyPressed();
+    SDL_DestroyTexture(helloText);
+    helloText=NULL;
+    TTF_CloseFont(font);
     graphics.quitSDL();
     return 0;
 }

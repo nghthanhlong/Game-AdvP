@@ -26,6 +26,11 @@ struct Graphics
     void loadAndRenderBackground(const char *imageFileName);
     std::string toUpperCase(const std::string& input);
 
+
+    TTF_Font* loadFont(const char*path, int size);
+    SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color textColor);
+    void renderTexture(SDL_Texture *texture, int x, int y);
+    void presentScene();
 };
 
 #endif // GRAPHICS_H_INCLUDED
