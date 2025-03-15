@@ -20,7 +20,7 @@ struct Graphics
     void cleanup();
 
     void drawGrid();
-    //void drawLetter(Cell grid[GRID_ROWS][GRID_COLS]);
+    void drawLetter(Cell grid[GRID_ROWS][GRID_COLS]);
     void drawResult(const std::string& message);
 
     void loadAndRenderBackground(const char *imageFileName);

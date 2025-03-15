@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1741957733 source:d:\academic\uet\advanced programming\game advp\main.cpp
+1742050316 source:d:\academic\uet\advanced programming\game advp\main.cpp
 	<iostream>
 	<vector>
 	<fstream>
@@ -8,26 +8,43 @@
 	<SDL.h>
 	<SDL_ttf.h>
 	<SDL_image.h>
-	"game.h."
+	"game.h"
 	"graphics.h"
 	"defs.h"
 
-1741958841 d:\academic\uet\advanced programming\game advp\graphics.h
+1742043860 d:\academic\uet\advanced programming\game advp\graphics.h
 	<SDL.h>
 	<SDL_ttf.h>
 	<string>
 	"defs.h"
 	"game.h"
 
-1741944563 d:\academic\uet\advanced programming\game advp\defs.h
+1742044703 d:\academic\uet\advanced programming\game advp\defs.h
 
-1741940631 d:\academic\uet\advanced programming\game advp\game.h
+1742050566 d:\academic\uet\advanced programming\game advp\game.h
+	<string>
+	<vector>
+	<SDL.h>
+	"defs.h"
 
-1741959727 source:d:\academic\uet\advanced programming\game advp\graphics.cpp
+1742050748 source:d:\academic\uet\advanced programming\game advp\graphics.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_ttf.h>
 	<SDL_image.h>
+	"graphics.h"
+	"defs.h"
+
+1742051051 source:d:\academic\uet\advanced programming\game advp\game.cpp
+	<iostream>
+	<vector>
+	<fstream>
+	<cstdlib>
+	<ctime>
+	<SDL.h>
+	<SDL_ttf.h>
+	<SDL_image.h>
+	"game.h"
 	"graphics.h"
 	"defs.h"
 

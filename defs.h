@@ -1,7 +1,6 @@
 #ifndef DEFS_H_INCLUDED
 #define DEFS_H_INCLUDED
 
-//const char *dictionarySet = "dictionary.txt";
 //const char *backgroundName = "background.jpg";
 const int WINDOW_WIDTH = 850;
 const int WINDOW_HEIGHT = 600;

@@ -11,6 +11,7 @@
 #include"game.h"
 #include"graphics.h"
 #include"defs.h"
+
 const char *WINDOW_TITLE = "Wordle";
 
 using namespace std;
@@ -26,8 +27,11 @@ void waitUntilKeyPressed() {
 
 int main(int argc, char* argv[])
 {
-    srand(time(0));
+    //srand(time(0));
+
     Graphics graphics;
+    Game game;
+
     SDL_Window* window = graphics.initSDL(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     if(!window) return -1;
     SDL_Renderer* renderer =graphics.createRenderer(window);
@@ -35,23 +39,42 @@ int main(int argc, char* argv[])
         graphics.quitSDL();
         return -1;
     }
-    graphics.drawGrid();
-    SDL_RenderPresent(renderer);
 
     if (TTF_Init() == -1) {
         graphics.logErrorAndExit("TTF_Init", TTF_GetError());
         return -1;
     }
     TTF_Font* font = graphics.loadFont("arial.ttf", 24);
+    graphics.font=font;
     SDL_Color color = {255, 255, 255, 255};
-    SDL_Texture* helloText = graphics.renderText("WELCOME TO WORDLE", font, color);
-    graphics.renderTexture(helloText, 300, 500);
 
-    graphics.presentScene();
+    bool quit=false;
+    SDL_Event event;
+    while(!quit){
+        while(SDL_PollEvent(&event)!=0){
+            if(event.type==SDL_QUIT){
+                quit=true;
+            }
+            /*else if(event.type==SDL_KEYDOWN){
+
+            }*/
+            else if(event.type==SDL_TEXTINPUT){
+                string upperText=event.text.text;
+                for(char &c:upperText){
+                    c=toupper(c);
+                }
+                game.textInput(upperText);
+            }
+        }
+        SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+        SDL_RenderClear(renderer);
+
+        graphics.drawGrid();
+        graphics.drawLetter(game.grid);
+        graphics.presentScene();
+    }
 
     waitUntilKeyPressed();
-    SDL_DestroyTexture(helloText);
-    helloText=NULL;
     TTF_CloseFont(font);
     graphics.quitSDL();
     return 0;

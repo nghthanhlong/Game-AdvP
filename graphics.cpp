@@ -4,7 +4,7 @@
 #include<SDL_image.h>
 #include"graphics.h"
 #include"defs.h"
-
+using namespace std;
 void Graphics::logErrorAndExit(const char* msg, const char* error)
 {
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "%s: %s", msg, error);
@@ -71,7 +71,7 @@ void Graphics::drawGrid(){
     }
 }
 
-void Graphics::drawResult(const std::string& message)
+void Graphics::drawResult(const string& message)
 {
     SDL_Color textColor={255, 255, 255, 255};
     SDL_Surface *textSurface=TTF_RenderText_Solid(font, message.c_str(), textColor);
@@ -127,4 +127,55 @@ void Graphics::renderTexture(SDL_Texture *texture, int x, int y)
 void Graphics::presentScene()
 {
     SDL_RenderPresent(renderer);
+}
+
+void Graphics::loadAndRenderBackground(const char* imagePath)
+{
+    SDL_Surface* surface = IMG_Load(imagePath);
+    if (!surface) {
+        cerr << "Failed to load background image: " << IMG_GetError() << std::endl;
+        return;
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    if (!texture) {
+        cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_DestroyTexture(texture);
+}
+
+string Graphics::toUpperCase(const string&input){
+    string result = input;
+    for(char &c : result){
+        c=toupper(c);
+    }
+    return result;
+}
+
+void Graphics::drawLetter(Cell grid[GRID_ROWS][GRID_COLS]){
+    for(int i=0; i<GRID_ROWS; i++){
+        for(int j=0; j<GRID_COLS; j++) {
+            if(!grid[i][j].text.empty()){
+                string uppertext=toUpperCase(grid[i][j].text);
+
+                SDL_Surface* textSurface=TTF_RenderText_Solid(font, uppertext.c_str(), grid[i][j].color);
+                SDL_Texture* textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
+
+                int textwidth=textSurface->w; int textheight=textSurface->h;
+                int x=300+j*CELL_SIZE+(CELL_SIZE-textwidth)/2;
+                int y=150+i*CELL_SIZE+(CELL_SIZE-textheight)/2;
+
+                SDL_Rect rect={x, y, textwidth, textheight};
+                SDL_RenderCopy(renderer, textTexture, nullptr, &rect);
+
+                SDL_FreeSurface(textSurface);
+                SDL_DestroyTexture(textTexture);
+            }
+        }
+    }
 }
