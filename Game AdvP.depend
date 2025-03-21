@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1742050316 source:d:\academic\uet\advanced programming\game advp\main.cpp
+1742569639 source:d:\academic\uet\advanced programming\game advp\main.cpp
 	<iostream>
 	<vector>
 	<fstream>
@@ -21,13 +21,13 @@
 
 1742044703 d:\academic\uet\advanced programming\game advp\defs.h
 
-1742050566 d:\academic\uet\advanced programming\game advp\game.h
+1742569595 d:\academic\uet\advanced programming\game advp\game.h
 	<string>
 	<vector>
 	<SDL.h>
 	"defs.h"
 
-1742050748 source:d:\academic\uet\advanced programming\game advp\graphics.cpp
+1742569587 source:d:\academic\uet\advanced programming\game advp\graphics.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_ttf.h>
@@ -35,7 +35,7 @@
 	"graphics.h"
 	"defs.h"
 
-1742051051 source:d:\academic\uet\advanced programming\game advp\game.cpp
+1742569169 source:d:\academic\uet\advanced programming\game advp\game.cpp
 	<iostream>
 	<vector>
 	<fstream>

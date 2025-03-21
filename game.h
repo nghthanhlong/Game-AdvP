@@ -3,7 +3,9 @@
 
 #include<string>
 #include<vector>
+
 #include<SDL.h>
+
 #include"defs.h"
 //to chuc game thanh cac Cell, moi Cell chua 1 letter
 struct Cell
@@ -23,10 +25,14 @@ struct Game
     std::string result;
     std::string getRandomWord();
 
+    void evaluateGuess(int currentrow);
+
     bool GameOver();
     bool Win();
+    bool showResult;
 
     void textInput(const std::string &text);
+    void keyPress(SDL_Keycode key);
 
 };
 #endif // GAME_H_INCLUDED

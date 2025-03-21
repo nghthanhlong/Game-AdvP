@@ -1,9 +1,8 @@
-juice
-apple
-black
-brown
-white
-house
-debug
-search
-youth
+JUICE
+APPLE
+GREEN
+BLACK
+YOUTH
+HARSH
+THICK
+BROWN

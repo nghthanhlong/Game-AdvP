@@ -13,6 +13,7 @@
 #include"defs.h"
 
 const char *WINDOW_TITLE = "Wordle";
+const char *fontUsed = "arial.ttf";
 
 using namespace std;
 
@@ -44,7 +45,7 @@ int main(int argc, char* argv[])
         graphics.logErrorAndExit("TTF_Init", TTF_GetError());
         return -1;
     }
-    TTF_Font* font = graphics.loadFont("arial.ttf", 24);
+    TTF_Font* font = graphics.loadFont(fontUsed, 24);
     graphics.font=font;
     SDL_Color color = {255, 255, 255, 255};
 
@@ -55,9 +56,10 @@ int main(int argc, char* argv[])
             if(event.type==SDL_QUIT){
                 quit=true;
             }
-            /*else if(event.type==SDL_KEYDOWN){
+            else if(event.type==SDL_KEYDOWN) {
+                game.keyPress(event.key.keysym.sym);
 
-            }*/
+            }
             else if(event.type==SDL_TEXTINPUT){
                 string upperText=event.text.text;
                 for(char &c:upperText){
@@ -71,6 +73,10 @@ int main(int argc, char* argv[])
 
         graphics.drawGrid();
         graphics.drawLetter(game.grid);
+
+        if(game.showResult){
+            graphics.drawResult(game.result);
+        }
         graphics.presentScene();
     }
 
