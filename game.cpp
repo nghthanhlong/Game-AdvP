@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+#include <unordered_map>
 
 #include<SDL.h>
 #include<SDL_ttf.h>
@@ -44,15 +45,33 @@ void Game::evaluateGuess(int currentrow){
     for(int i=0; i<GRID_COLS; i++){
         guess+=grid[currentrow][i].text;
     }
+
+    unordered_map<char, int> mp;
+    vector<bool> check(GRID_COLS, false);
+
+    for(char &c : answer){
+        mp[c]++;
+    }
     for(int i=0; i<GRID_COLS; i++){
         if(guess[i]==answer[i]){
-            grid[currentrow][i].color={0, 255, 0, 255};
+            grid[currentrow][i].color={0,255,0,255};
+            cout<<guess[i]<<" is in the word\n";
+            mp[guess[i]]--;
+            check[i]=true;
         }
-        else if(answer.find(guess[i])!=string::npos){
+    }
+    for(int i=0; i<GRID_COLS; i++){
+        if(!check[i] && answer.find(guess[i])!=string::npos && mp[guess[i]]>0){
             grid[currentrow][i].color={255, 255, 0, 255};
+            cout<<guess[i]<<" is in wrong position\n";
+            mp[guess[i]]--;
+            check[i]=true;
         }
-        else {
-            grid[currentrow][i].color={255, 255, 255, 255};
+    }
+    for(int i=0; i<GRID_COLS; i++){
+        if(!check[i]){
+            grid[currentrow][i].color={255, 255,255,255};
+            cout<<guess[i]<<" is not in the word\n";
         }
     }
 }
