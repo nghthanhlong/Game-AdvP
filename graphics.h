@@ -4,7 +4,8 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
-#include "defs.h"
+
+#include"defs.h"
 #include "game.h"
 
 struct Graphics
@@ -12,25 +13,23 @@ struct Graphics
     SDL_Window* window;
     SDL_Renderer* renderer;
     TTF_Font* font;
+    SDL_Texture *background;
 
     void logErrorAndExit(const char* msg, const char* error);
     SDL_Window* initSDL(int WINDOW_WIDTH, int WINDOW_HEIGHT, const char* WINDOW_TITLE);
     SDL_Renderer* createRenderer(SDL_Window* window);
     void quitSDL();
-    void cleanup();
 
     void drawGrid();
-    void drawLetter(Cell grid[GRID_ROWS][GRID_COLS]);
-    void drawResult(const std::string& message);
+    void drawLetter(Cell grid[GRID_ROWS][GRID_COLS], Game game);
+    void drawResult(const std::string& message, const std::string &answer);
 
-    void loadAndRenderBackground(const char *imageFileName);
-    std::string toUpperCase(const std::string& input);
-
+    SDL_Texture *loadTexture(const char *fileName, SDL_Renderer *renderer);
 
     TTF_Font* loadFont(const char*path, int size);
-    SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color textColor);
     void renderTexture(SDL_Texture *texture, int x, int y);
     void presentScene();
+    void waitUntilKeyPressed();
 };
 
 #endif // GRAPHICS_H_INCLUDED

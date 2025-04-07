@@ -6,6 +6,7 @@
 
 #include"graphics.h"
 #include"defs.h"
+#include"game.h"
 
 using namespace std;
 
@@ -20,11 +21,12 @@ SDL_Window* Graphics::initSDL(int WINDOW_WIDTH, int WINDOW_HEIGHT, const char* W
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         logErrorAndExit("SDL_Init", SDL_GetError());
     }
-
-    if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)){
-        logErrorAndExit("SDL_image error:", IMG_GetError());
+    if(TTF_Init()==-1){
+        logErrorAndExit("TTF_Init", TTF_GetError());
     }
-
+    if(!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)){
+        logErrorAndExit("IMG_Init", IMG_GetError());
+    }
     window = SDL_CreateWindow(WINDOW_TITLE,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
                               WINDOW_WIDTH,WINDOW_HEIGHT,SDL_WINDOW_SHOWN);
 
@@ -47,15 +49,16 @@ SDL_Renderer* Graphics::createRenderer(SDL_Window* window) {
 }
 
 void Graphics::quitSDL(){
+    SDL_DestroyTexture(background);
+    background=NULL;
+
+    TTF_CloseFont(font);
+    font=NULL;
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    IMG_Quit(); SDL_Quit();
-}
 
-void Graphics::cleanup(){
-    TTF_CloseFont(font);
-    quitSDL();
-    TTF_Quit();
+    TTF_Quit(); IMG_Quit(); SDL_Quit();
 }
 
 void Graphics::drawGrid(){
@@ -75,16 +78,17 @@ void Graphics::drawGrid(){
     }
 }
 
-void Graphics::drawLetter(Cell grid[GRID_ROWS][GRID_COLS]){
+void Graphics::drawLetter(Cell grid[GRID_ROWS][GRID_COLS], Game game){
     for(int i=0; i<GRID_ROWS; i++){
         for(int j=0; j<GRID_COLS; j++) {
             if(!grid[i][j].text.empty()){
-                string uppertext=toUpperCase(grid[i][j].text);
+                string uppertext=grid[i][j].text;
 
                 SDL_Surface* textSurface=TTF_RenderText_Solid(font, uppertext.c_str(), grid[i][j].color);
                 SDL_Texture* textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
 
                 int textwidth=textSurface->w; int textheight=textSurface->h;
+
                 int startX=(WINDOW_WIDTH-GRID_COLS*CELL_SIZE)/2;
                 int startY=(WINDOW_HEIGHT-GRID_ROWS*CELL_SIZE)/2;
                 int x=startX+j*CELL_SIZE+(CELL_SIZE-textwidth)/2;
@@ -100,22 +104,45 @@ void Graphics::drawLetter(Cell grid[GRID_ROWS][GRID_COLS]){
     }
 }
 
-void Graphics::drawResult(const string& message)
+void Graphics::drawResult(const string& message, const string &answer)
 {
-    SDL_Color textColor={255, 255, 255, 255};
-    SDL_Surface *textSurface=TTF_RenderText_Solid(font, message.c_str(), textColor);
-    SDL_Texture *textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Color mainColor={255, 255, 255, 255};
+    SDL_Color answerColor={255, 0, 0, 0};
+    SDL_Surface *mainSurface=TTF_RenderText_Solid(font, message.c_str(), mainColor);
+    SDL_Texture *mainTexture=SDL_CreateTextureFromSurface(renderer, mainSurface);
 
-    int textWidth=textSurface->w; int textHeight=textSurface->h;
-    int startX=(WINDOW_WIDTH-GRID_COLS*CELL_SIZE)/2;
+    int mainWidth=mainSurface->w; int mainHeight=mainSurface->h;
+
     int startY=(WINDOW_HEIGHT-GRID_ROWS*CELL_SIZE)/2;
-    int x = (WINDOW_WIDTH-textWidth)/2;
+    int mainX = (WINDOW_WIDTH-mainWidth)/2;
     int y = startY+GRID_ROWS*CELL_SIZE+20;
 
-    SDL_Rect destRect = {x, y, textWidth, textHeight};
-    SDL_RenderCopy(renderer, textTexture, nullptr, &destRect);
-    SDL_FreeSurface(textSurface);
-    SDL_DestroyTexture(textTexture);
+    if(answer.empty()==false){
+        SDL_Surface *answerSurface = TTF_RenderText_Solid(font, answer.c_str(), answerColor);
+        int answerWidth=answerSurface->w;
+        SDL_FreeSurface(answerSurface);
+        int totalWidth=mainWidth+answerWidth;
+        mainX=(WINDOW_WIDTH-totalWidth)/2;
+    }
+
+    SDL_Rect destRect = {mainX, y, mainWidth, mainHeight};
+    SDL_RenderCopy(renderer, mainTexture, nullptr, &destRect);
+    SDL_FreeSurface(mainSurface);
+    SDL_DestroyTexture(mainTexture);
+
+    if(answer.empty()==false){
+        SDL_Surface *answerSurface=TTF_RenderText_Solid(font, answer.c_str(), answerColor);
+        SDL_Texture *answerTexture=SDL_CreateTextureFromSurface(renderer, answerSurface);
+
+        int answerWidth=answerSurface->w;
+        int answerHeight=answerSurface->h;
+        int answerX=mainX+mainWidth;
+
+        SDL_Rect answerRect={answerX, y, answerWidth, answerHeight};
+        SDL_RenderCopy(renderer, answerTexture, nullptr, &answerRect);
+        SDL_FreeSurface(answerSurface);
+        SDL_DestroyTexture(answerTexture);
+    }
 }
 
 TTF_Font* Graphics::loadFont(const char* path, int size)
@@ -127,63 +154,25 @@ TTF_Font* Graphics::loadFont(const char* path, int size)
     return gFont;
 }
 
-SDL_Texture* Graphics::renderText(const char* text, TTF_Font* font, SDL_Color textColor)
-{
-    SDL_Surface* textSurface = TTF_RenderText_Solid( font, text, textColor );
-    if( textSurface == nullptr ) {
-        SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "Render text surface %s", TTF_GetError());
-        return nullptr;
-    }
-
-    SDL_Texture* texture = SDL_CreateTextureFromSurface( renderer, textSurface );
-    if( texture == nullptr ) {
-        SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "Create texture from text %s", SDL_GetError());
-    }
-
-    SDL_FreeSurface( textSurface );
-    return texture;
-}
-
-void Graphics::renderTexture(SDL_Texture *texture, int x, int y)
-{
-    SDL_Rect dest;
-
-    dest.x = x;
-    dest.y = y;
-    SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
-
-    SDL_RenderCopy(renderer, texture, NULL, &dest);
-}
-
 void Graphics::presentScene()
 {
     SDL_RenderPresent(renderer);
 }
 
-void Graphics::loadAndRenderBackground(const char* imagePath)
-{
-    SDL_Surface* surface = IMG_Load(imagePath);
-    if (!surface) {
-        cerr << "Failed to load background image: " << IMG_GetError() << std::endl;
-        return;
+SDL_Texture *Graphics::loadTexture(const char *fileName, SDL_Renderer *renderer){
+    SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", fileName);
+    SDL_Texture *texture=IMG_LoadTexture(renderer, fileName);
+    if(texture==NULL){
+        SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", IMG_GetError());
     }
-
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-
-    if (!texture) {
-        cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-        return;
-    }
-
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_DestroyTexture(texture);
+    return texture;
 }
 
-string Graphics::toUpperCase(const string&input){
-    string result = input;
-    for(char &c : result){
-        c=toupper(c);
+void Graphics::waitUntilKeyPressed() {
+    SDL_Event e;
+    while (true) {
+        if (SDL_PollEvent(&e) != 0 && (e.type == SDL_KEYDOWN || e.type == SDL_QUIT))
+            return;
+        SDL_Delay(100);
     }
-    return result;
 }
