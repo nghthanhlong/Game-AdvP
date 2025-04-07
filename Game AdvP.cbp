@@ -38,6 +38,7 @@
 		<Unit filename="graphics.cpp" />
 		<Unit filename="graphics.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="run.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

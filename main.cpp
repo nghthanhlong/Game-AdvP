@@ -1,8 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <fstream>
-#include <cstdlib>
-#include <ctime>
 
 #include<SDL.h>
 #include<SDL_ttf.h>
@@ -10,78 +6,34 @@
 
 #include"game.h"
 #include"graphics.h"
-#include"defs.h"
+#include"run.h"
 
-const char *WINDOW_TITLE = "Wordle";
-const char *fontUsed = "arial.ttf";
+const char *WINDOW_TITLE = "Hardle";
+const char *fontUsed = "assets/PatrickHand-Regular.ttf";
+const char *backgroundUsed="assets/background.jpg";
 
 using namespace std;
 
-void waitUntilKeyPressed() {
-    SDL_Event e;
-    while (true) {
-        if (SDL_PollEvent(&e) != 0 && (e.type == SDL_KEYDOWN || e.type == SDL_QUIT))
-            return;
-        SDL_Delay(100);
-    }
-}
-
 int main(int argc, char* argv[])
 {
-    //srand(time(0));
-
     Graphics graphics;
     Game game;
+    Run run;
 
     SDL_Window* window = graphics.initSDL(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-    if(!window) return -1;
     SDL_Renderer* renderer =graphics.createRenderer(window);
-    if(!renderer) {
+
+    TTF_Font* font = graphics.loadFont(fontUsed, 36);
+    graphics.font=font;
+
+    SDL_Texture *background=graphics.loadTexture(backgroundUsed, renderer);
+    graphics.background=background;
+
+    if(!renderer || !background || !font) {
         graphics.quitSDL();
         return -1;
     }
-
-    if (TTF_Init() == -1) {
-        graphics.logErrorAndExit("TTF_Init", TTF_GetError());
-        return -1;
-    }
-    TTF_Font* font = graphics.loadFont(fontUsed, 24);
-    graphics.font=font;
-    SDL_Color color = {255, 255, 255, 255};
-
-    bool quit=false;
-    SDL_Event event;
-    while(!quit){
-        while(SDL_PollEvent(&event)!=0){
-            if(event.type==SDL_QUIT){
-                quit=true;
-            }
-            else if(event.type==SDL_KEYDOWN) {
-                game.keyPress(event.key.keysym.sym);
-
-            }
-            else if(event.type==SDL_TEXTINPUT){
-                string upperText=event.text.text;
-                for(char &c:upperText){
-                    c=toupper(c);
-                }
-                game.textInput(upperText);
-            }
-        }
-        SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-        SDL_RenderClear(renderer);
-
-        graphics.drawGrid();
-        graphics.drawLetter(game.grid);
-
-        if(game.showResult){
-            graphics.drawResult(game.result);
-        }
-        graphics.presentScene();
-    }
-
-    waitUntilKeyPressed();
-    TTF_CloseFont(font);
+    run.gameRun(renderer, background, graphics, game);
     graphics.quitSDL();
     return 0;
 }
