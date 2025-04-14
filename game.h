@@ -17,9 +17,15 @@ struct Cell
 
 struct Game
 {
-    Cell grid[GRID_ROWS][GRID_COLS];
+    static int winCount;
+    static int timesCount;
     int currentrow, currentcol;
+
+    bool winCheck=false;
+    bool timeCheck=false;
     bool finish=false;
+
+    Cell grid[GRID_ROWS][GRID_COLS];
     Game();
 
     std::string answer;
@@ -34,6 +40,11 @@ struct Game
 
     void textInput(std::string &text);
     void keyPress(SDL_Keycode key);
+
     std::string toUpperCase(const std::string &input);
+
+    void resetGame();
+    void countGameWon();
+    void countTimesPlayed();
 };
 #endif // GAME_H_INCLUDED

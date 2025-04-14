@@ -12,15 +12,19 @@
 #include"game.h"
 #include"defs.h"
 
+using namespace std;
 
 const char *dictionary = "assets/dictionary.txt";
-using namespace std;
+
+int Game::winCount=0;
+int Game::timesCount=0;
 
 Game::Game(){
     currentrow=0;
     currentcol=0;
     answer=getRandomWord();
     showResult=false;
+    finish=false;
 }
 
 string Game::getRandomWord(){
@@ -139,4 +143,36 @@ string Game::toUpperCase(const string&input){
         c=toupper(c);
     }
     return result;
+}
+
+void Game::resetGame(){
+    currentcol=0;
+    currentrow=0;
+    answer=getRandomWord();
+    showResult=false;
+    finish=false;
+    winCheck=false;
+    timeCheck=false;
+    for(int i=0; i<GRID_ROWS; i++){
+        for(int j=0; j<GRID_COLS; j++){
+            grid[i][j].text.clear();
+            grid[i][j].color={255,255,255,255};
+        }
+    }
+}
+
+void Game::countGameWon(){
+    if(gameWin() && !winCheck){
+        winCount++;
+        winCheck=true;
+        cout<<"Win: "<<winCount<<"\n";
+    }
+}
+
+void Game::countTimesPlayed(){
+    if(finish && !timeCheck){
+        timesCount++;
+        timeCheck=true;
+        cout<<"Times: "<<timesCount<<"\n";
+    }
 }
