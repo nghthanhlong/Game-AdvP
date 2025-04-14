@@ -115,7 +115,7 @@ void Graphics::drawResult(const string& message, const string &answer)
 
     int startY=(WINDOW_HEIGHT-GRID_ROWS*CELL_SIZE)/2;
     int mainX = (WINDOW_WIDTH-mainWidth)/2;
-    int y = startY+GRID_ROWS*CELL_SIZE+20;
+    int y = startY+GRID_ROWS*CELL_SIZE+DISTANCE;
 
     if(answer.empty()==false){
         SDL_Surface *answerSurface = TTF_RenderText_Solid(font, answer.c_str(), answerColor);
@@ -168,11 +168,98 @@ SDL_Texture *Graphics::loadTexture(const char *fileName, SDL_Renderer *renderer)
     return texture;
 }
 
-void Graphics::waitUntilKeyPressed() {
-    SDL_Event e;
-    while (true) {
-        if (SDL_PollEvent(&e) != 0 && (e.type == SDL_KEYDOWN || e.type == SDL_QUIT))
-            return;
-        SDL_Delay(100);
-    }
+void Graphics::drawReplayMessage(){
+    SDL_Color messageColor={0, 255, 0, 0};
+    const string message="Press Enter to play again";
+
+    TTF_Font *font=TTF_OpenFont(fontUsed, 24);
+
+    SDL_Surface *messageSurface=TTF_RenderText_Solid(font, message.c_str(), messageColor);
+    SDL_Texture *messageTexture=SDL_CreateTextureFromSurface(renderer, messageSurface);
+
+    int messageWidth=messageSurface->w;
+    int messageHeight=messageSurface->h;
+
+    int startY=(WINDOW_HEIGHT-GRID_ROWS*CELL_SIZE)/2;
+    int mainX=(WINDOW_WIDTH-messageWidth)/2;
+    int mainY=startY+GRID_ROWS*CELL_SIZE+3*DISTANCE;
+
+    SDL_Rect destRect={mainX, mainY, messageWidth, messageHeight};
+    SDL_RenderCopy(renderer, messageTexture, nullptr, &destRect);
+    SDL_FreeSurface(messageSurface);
+    SDL_DestroyTexture(messageTexture);
+}
+
+void Graphics::drawVictoryNumber(int winCount){
+    SDL_Color messageColor={255, 255, 255, 255};
+    SDL_Color numberColor={0, 255, 0, 255};
+
+    const string message = "Wins: ";
+    string number=to_string(winCount);
+
+    TTF_Font *font=TTF_OpenFont(fontUsed, 24);
+
+    SDL_Surface *messageSurface=TTF_RenderText_Solid(font, message.c_str(), messageColor);
+    SDL_Texture *messageTexture=SDL_CreateTextureFromSurface(renderer, messageSurface);
+
+    int messageWidth=messageSurface->w;
+    int messageHeight=messageSurface->h;
+
+    SDL_Surface *numberSurface=TTF_RenderText_Solid(font, number.c_str(), numberColor);
+    SDL_Texture *numberTexture=SDL_CreateTextureFromSurface(renderer, numberSurface);
+
+    int numberWidth=numberSurface->w;
+    int numberHeight=numberSurface->h;
+
+    int messageX=DISTANCE;
+    int messageY=DISTANCE_WINDOW_AND_LINE;
+
+    int numberX=messageX+messageWidth;
+
+    SDL_Rect messageRect={messageX, messageY, messageWidth, messageHeight};
+    SDL_RenderCopy(renderer, messageTexture, nullptr, &messageRect);
+    SDL_FreeSurface(messageSurface);
+    SDL_DestroyTexture(messageTexture);
+
+    SDL_Rect numberRect={numberX, messageY, numberWidth, numberHeight};
+    SDL_RenderCopy(renderer, numberTexture, nullptr, &numberRect);
+    SDL_FreeSurface(numberSurface);
+    SDL_DestroyTexture(numberTexture);
+}
+
+void Graphics::drawTimesPlayed(int times){
+    SDL_Color messageColor={255, 255, 255, 255};
+    SDL_Color numberColor={0,255,0,255};
+
+    const string message="Times: ";
+    string number=to_string(times);
+
+    TTF_Font *font=TTF_OpenFont(fontUsed, 24);
+
+    SDL_Surface *messageSurface=TTF_RenderText_Solid(font, message.c_str(), messageColor);
+    SDL_Texture *messageTexture=SDL_CreateTextureFromSurface(renderer, messageSurface);
+
+    int messageWidth=messageSurface->w;
+    int messageHeight=messageSurface->h;
+
+    SDL_Surface *numberSurface=TTF_RenderText_Solid(font, number.c_str(), numberColor);
+    SDL_Texture *numberTexture=SDL_CreateTextureFromSurface(renderer, numberSurface);
+
+    int numberWidth=numberSurface->w;
+    int numberHeight=numberSurface->h;
+
+    int messageX=DISTANCE;
+    int messageY=DISTANCE_WINDOW_AND_LINE+DISTANCE;
+
+    int numberX=messageX+messageWidth;
+
+    SDL_Rect messageRect={messageX, messageY, messageWidth, messageHeight};
+    SDL_RenderCopy(renderer, messageTexture, nullptr, &messageRect);
+    SDL_FreeSurface(messageSurface);
+    SDL_DestroyTexture(messageTexture);
+
+    SDL_Rect numberRect={numberX, messageY, numberWidth, numberHeight};
+    SDL_RenderCopy(renderer, numberTexture, nullptr, &numberRect);
+    SDL_FreeSurface(numberSurface);
+    SDL_DestroyTexture(numberTexture);
 }
