@@ -16,13 +16,29 @@ struct Run
                 if(event.type==SDL_QUIT){
                     quit=true;
                 }
-                else if(event.type==SDL_KEYDOWN){
-                    game.keyPress(event.key.keysym.sym);
+                else if(!game.finish){
+                    if(event.type==SDL_KEYDOWN){
+                        game.keyPress(event.key.keysym.sym);
+                    }
+                    else if(event.type==SDL_TEXTINPUT){
+                        std::string text=event.text.text;
+                        std::cout<<text<<"\n";
+                        if(text.size()==1 && isalpha(text[0])){
+                            game.textInput(text);
+                        }
+                        else{
+                            std::cout<<text<<" is invalid\n";
+                        }
+                    }
                 }
-                else if(event.type==SDL_TEXTINPUT){
-                    std::string text=event.text.text;
-                    if(text.size()==1 && isalpha(text[0])){
-                        game.textInput(text);
+                if(game.finish){
+                    if(event.type==SDL_KEYDOWN){
+                        if(event.key.keysym.sym==SDLK_RETURN){
+                            game.resetGame();
+                        }
+                        else{
+                            quit=true;
+                        }
                     }
                 }
             }
@@ -30,6 +46,8 @@ struct Run
 
             graphics.drawGrid();
             graphics.drawLetter(game.grid, game);
+            graphics.drawTimesPlayed(game.timesCount);
+            graphics.drawVictoryNumber(game.winCount);
 
             if(game.showResult){
                 if(game.gameOver()){
@@ -37,16 +55,16 @@ struct Run
                     game.finish=true;
                 }
                 if(game.gameWin()){
+                    game.countGameWon();
                     graphics.drawResult(game.result, "");
                     game.finish=true;
                 }
             }
-            graphics.presentScene();
             if(game.finish){
-                graphics.presentScene();
-                graphics.waitUntilKeyPressed();
-                break;
+                game.countTimesPlayed();
+                graphics.drawReplayMessage();
             }
+            graphics.presentScene();
         }
     }
 };
