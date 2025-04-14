@@ -25,11 +25,12 @@ struct Graphics
     void drawResult(const std::string& message, const std::string &answer);
 
     SDL_Texture *loadTexture(const char *fileName, SDL_Renderer *renderer);
-
     TTF_Font* loadFont(const char*path, int size);
-    void renderTexture(SDL_Texture *texture, int x, int y);
     void presentScene();
-    void waitUntilKeyPressed();
+
+    void drawReplayMessage();
+    void drawVictoryNumber(int winCount);
+    void drawTimesPlayed(int times);
 };
 
 #endif // GRAPHICS_H_INCLUDED
