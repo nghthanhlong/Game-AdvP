@@ -8,10 +8,6 @@
 #include"graphics.h"
 #include"run.h"
 
-const char *WINDOW_TITLE = "Hardle";
-const char *fontUsed = "assets/PatrickHand-Regular.ttf";
-const char *backgroundUsed="assets/background.jpg";
-
 using namespace std;
 
 int main(int argc, char* argv[])
